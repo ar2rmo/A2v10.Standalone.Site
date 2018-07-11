@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -26,5 +27,15 @@ namespace A2v10.Standalone.Site.Controllers
 
 			return View();
 		}
+
+		public ActionResult Test()
+		{
+			ViewBag.Message = "Your Test Page";
+
+			String path = Server.MapPath("~/App_Data/Home/test.js");
+			String script = System.IO.File.ReadAllText(path);
+			ViewBag.Script = script;
+			return View();
+		}
 	}
-}
+};

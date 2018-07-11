@@ -1,0 +1,21 @@
+﻿@{
+	ViewBag.Title = "Test PAGE";
+}
+
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+
+<div id="page 1">
+
+</div>
+
+@section scripts {
+
+<!--{path}/{action}/{id}-->
+<script src="/model/load/catalog/customer/edit/0"></script>
+
+<script type="text/javascript">
+	@Html.Raw(ViewBag.Script)
+</script>
+}
