@@ -6,8 +6,16 @@
 <h3>@ViewBag.Message</h3>
 
 
-<div id="page 1">
-
+<div id="page1">
+	<h4>Edit element</h4>
+	<fieldset>
+		<label>Name</label>
+		<input v-model="Agent.Name" />
+		<label>Memo</label>
+		<input v-model="Agent.Memo" />
+	</fieldset>
+	<hr />
+	<pre v-text="$data"></pre>
 </div>
 
 @section scripts {

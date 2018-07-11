@@ -25,15 +25,7 @@ namespace A2v10.Standalone.Site.Controllers
 		[HttpGet]
 		public async Task Load(String pathInfo)
 		{
-			try
-			{
-				Response.ContentType = "text/javascript";
-				await _baseController.RenderModel(pathInfo, null, Response.Output);
-			}
-			catch (Exception ex)
-			{
-				_baseController.WriteScriptException(ex, Response.Output);
-			}
+			await _baseController.StandaloneLoadModel(Response, pathInfo);
 		}
 	}
 }
