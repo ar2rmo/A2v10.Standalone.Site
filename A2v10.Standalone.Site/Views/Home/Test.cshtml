@@ -13,9 +13,10 @@
 		<input v-model="Agent.Name" />
 		<label>Memo</label>
 		<input v-model="Agent.Memo" />
+		<button v-on:click.stop.prevent="save">Save</button>
 	</fieldset>
 	<hr />
-	<pre v-text="$data"></pre>
+	<pre v-text="Agent"></pre>
 </div>
 
 @section scripts {

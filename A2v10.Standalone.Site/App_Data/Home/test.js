@@ -9,22 +9,27 @@
 
 	let cm = window.$currentModule();
 
+
+	const DataModelController = component('standaloneController');
+
 	console.dir(cm);
 
-	const vm = new Vue({
+	const vm = new DataModelController({
 		el: "#page1",
 		data: cm.dataModel,
 		methods: {
-			load() {
-				http.post('/data/load', JSON.stringify({ url: '/catalog/customer/edit', id:141 }))
-					.then((result) => {
-						this.Agent = result.Agent
+			save() {
+				vm.$save()
+					.then(result => {
+						console.dir('saved');
 					});
 			}
-		},
-		mounted: function () {
-			this.load();
 		}
 	});
 
+	DataModelController.init(vm, '/catalog/customer/edit', function () {
+		this.$load(141);
+	});
+
+	
 })();

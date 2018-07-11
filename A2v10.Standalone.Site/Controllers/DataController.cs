@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -15,11 +16,15 @@ namespace A2v10.Standalone.Site.Controllers
 			_baseController = new A2v10.Request.BaseController();
 		}
 
-		// GET: Data
 		[HttpPost]
-		public void Load(String pathInfo)
+		public async Task Load()
 		{
-			_baseController.StandaloneLoadData(Request, Response, pathInfo);
+			await _baseController.StandaloneLoadData(Request, Response);
+		}
+
+		public async Task Save()
+		{
+			await _baseController.StandaloneSaveData(Request, Response);
 		}
 	}
 }
