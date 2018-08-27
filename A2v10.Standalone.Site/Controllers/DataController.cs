@@ -26,5 +26,10 @@ namespace A2v10.Standalone.Site.Controllers
 		{
 			await _baseController.StandaloneSaveData(Request, Response);
 		}
+
+		public async Task Invoke()
+		{
+			//await _baseController.StandaloneInvoke(Request, Response);
+		}
 	}
 }

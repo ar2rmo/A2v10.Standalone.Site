@@ -40,7 +40,7 @@
 	let currentToken = 1603;
 
 	function nextToken() {
-		return '' + (currentToken++);
+		return '' + currentToken++;
 	}
 })();
 // Copyright © 2015-2018 Alex Kukhtin. All rights reserved.
@@ -95,7 +95,7 @@
 
 // Copyright © 2015-2018 Alex Kukhtin. All rights reserved.
 
-// 20180619-7227
+// 20180815-7274
 // services/utils.js
 
 app.modules['std:utils'] = function () {
@@ -153,7 +153,8 @@ app.modules['std:utils'] = function () {
 			compare: dateCompare,
 			endOfMonth: endOfMonth,
 			minDate: dateCreate(1901, 1, 1),
-			maxDate: dateCreate(2999, 12, 31)
+			maxDate: dateCreate(2999, 12, 31),
+			fromDays: fromDays
 		},
 		text: {
 			contains: textContains,
@@ -423,10 +424,10 @@ app.modules['std:utils'] = function () {
 	}
 
 	function dateDiff(unit, d1, d2) {
+		if (d1.getTime() > d2.getTime())
+			[d1, d2] = [d2, d1];
 		switch (unit) {
 			case "month":
-				if (d1.getTime() > d2.getTime())
-					[d1, d2] = [d2, d1];
 				let delta = 0;
 				if (d2.getDate() < d1.getDate())
 					delta = -1;
@@ -445,8 +446,21 @@ app.modules['std:utils'] = function () {
 				}
 				month += d2.getMonth() - d1.getMonth();
 				return month + delta;
+			case "day":
+				let du = 1000 * 60 * 60 * 24;
+				return Math.floor((d2 - d1) / du);
+			case "year":
+			case 'year':
+				var dd = new Date(d1.getFullYear(), d2.getMonth(), d2.getDate(), d2.getHours(), d2.getMinutes(), d2.getSeconds(), d2.getMilliseconds());
+				return d2.getFullYear() - d1.getFullYear() + (dd < d1 ? (d2 > d1 ? -1 : 0) : (d2 < d1 ? 1 : 0));
 		}
 		throw new Error('Invalid unit value for utils.date.diff');
+	}
+
+	function fromDays(days) {
+		let dt = new Date(1900, 0, days, 0, 0, 0, 0);
+		dt.setHours(0, -dt.getTimezoneOffset(), 0, 0);
+		return dt;
 	}
 
 	function dateAdd(dt, nm, unit) {
@@ -532,7 +546,6 @@ app.modules['std:utils'] = function () {
 };
 
 
-
 // Copyright © 2015-2018 Alex Kukhtin. All rights reserved.
 
 /*20180619-7227*/
@@ -582,9 +595,9 @@ app.modules['std:url'] = function () {
 	}
 
 	function toUrl(obj) {
-		if (!utils.isDefined(obj)) return '';
+		if (!utils.isDefined(obj) || obj === null) return '';
 		if (utils.isDate(obj)) {
-			return utils.format(obj, "DateUrl");
+			return utils.format(obj, "DateUrl");		
 		} else if (period.isPeriod(obj)) {
 			return obj.format('DateUrl');
 		} else if (utils.isObjectExact(obj)) {
@@ -737,7 +750,7 @@ app.modules['std:url'] = function () {
 
 // Copyright © 2015-2018 Alex Kukhtin. All rights reserved.
 
-// 20180508-7179
+// 20180821-7280
 // services/period.js
 
 app.modules['std:period'] = function () {
@@ -783,12 +796,12 @@ app.modules['std:period'] = function () {
 		}
 		this.normalize();
 		return this;
-	}
+	};
 
 	TPeriod.prototype.equal = function (p) {
 		return this.From.getTime() === p.From.getTime() &&
 			this.To.getTime() === p.To.getTime();
-	}
+	};
 
 	TPeriod.prototype.fromUrl = function (v) {
 		if (utils.isObject(v) && 'From' in v) {
@@ -805,15 +818,15 @@ app.modules['std:period'] = function () {
 		}
 		let df = px[0];
 		let dt = px.length > 1 ? px[1] : px[0];
-		this.From = date.tryParse(df)
+		this.From = date.tryParse(df);
 		this.To = date.tryParse(dt);
 		return this;
-	}
+	};
 
 	TPeriod.prototype.isAllData = function () {
 		return this.From.getTime() === date.minDate.getTime() &&
 			this.To.getTime() === date.maxDate.getTime();
-	}
+	};
 
 	TPeriod.prototype.format = function (dataType) {
 		//console.warn(`${this.From.getTime()}-${date.minDate.getTime()} : ${this.To.getTime()}-${date.maxDate.getTime()}`);
@@ -826,26 +839,26 @@ app.modules['std:period'] = function () {
 		if (dataType === "DateUrl")
 			return utils.format(from, dataType) + '-' + utils.format(to, dataType);
 		return utils.format(from, dataType) + ' - ' + (utils.format(to, dataType) || '???');
-	}
+	};
 
 	TPeriod.prototype.in = function (dt) {
 		let t = dt.getTime();
 		let zd = utils.date.zero().getTime();
 		if (this.From.getTime() === zd || this.To.getTime() === zd) return;
 		return t >= this.From.getTime() && t <= this.To.getTime();
-	}
+	};
 
 	TPeriod.prototype.normalize = function () {
 		if (this.From.getTime() > this.To.getTime())
 			[this.From, this.To] = [this.To, this.From];
 		return this;
-	}
+	};
 
 	TPeriod.prototype.set = function (from, to) {
 		this.From = from;
 		this.To = to;
 		return this.normalize();
-	}
+	};
 
 
 	function isPeriod(value) { return value instanceof TPeriod; }
@@ -939,7 +952,7 @@ app.modules['std:period'] = function () {
 
 // Copyright © 2015-2018 Alex Kukhtin. All rights reserved.
 
-/*20180511-7186*/
+/*20180725-7250*/
 /* services/modelinfo.js */
 
 app.modules['std:modelInfo'] = function () {
@@ -964,12 +977,11 @@ app.modules['std:modelInfo'] = function () {
 	function getPagerInfo(mi) {
 		if (!mi) return undefined;
 		let x = { pageSize: mi.PageSize, offset: mi.Offset, dir: mi.SortDir, order: mi.SortOrder };
-		if (mi.Filter)
+		if (mi.Filter) {
 			for (let p in mi.Filter) {
-				let fVal = mi.Filter[p];
-				if (!fVal) continue; // empty value, skip it
-				x[p] = fVal;
+				x[p] = mi.Filter[p];
 			}
+		}
 		return x;
 	}
 };
@@ -1002,7 +1014,7 @@ app.modules['std:modelInfo'] = function () {
 
 // Copyright © 2015-2018 Alex Kukhtin. All rights reserved.
 
-// 20180701-7237
+// 20180823-7285
 /* services/http.js */
 
 app.modules['std:http'] = function () {
@@ -1016,7 +1028,8 @@ app.modules['std:http'] = function () {
 		get: get,
 		post: post,
 		load: load,
-		upload: upload
+		upload: upload,
+		localpost
 	};
 
 	function doRequest(method, url, data, raw) {
@@ -1030,9 +1043,9 @@ app.modules['std:http'] = function () {
 						resolve(xhr.response);
 						return;
 					}
-					let ct = xhr.getResponseHeader('content-type');
+					let ct = xhr.getResponseHeader('content-type') || '';
 					let xhrResult = xhr.responseText;
-					if (ct.indexOf('application/json') !== -1)
+					if (ct && ct.indexOf('application/json') !== -1)
 						xhrResult = JSON.parse(xhr.responseText);
 					resolve(xhrResult);
 				}
@@ -1091,7 +1104,7 @@ app.modules['std:http'] = function () {
 		let fc = selector ? selector.firstElementChild : null;
 		if (fc && fc.__vue__) {
 			fc.__vue__.$destroy();
-		};
+		}
 		return new Promise(function (resolve, reject) {
 			doRequest('GET', url)
 				.then(function (html) {
@@ -1126,6 +1139,37 @@ app.modules['std:http'] = function () {
 					alert(error);
 					resolve(false);
 				});
+		});
+	}
+
+	function localpost(command, data) {
+		return new Promise(function (resolve, reject) {
+			let xhr = new XMLHttpRequest();
+
+			xhr.onload = function (response) {
+				if (xhr.status === 200) {
+					let ct = xhr.getResponseHeader('content-type');
+					let xhrResult = xhr.responseText;
+					if (ct.indexOf('application/json') !== -1)
+						xhrResult = JSON.parse(xhr.responseText);
+					resolve(xhrResult);
+				}
+				else if (xhr.status === 255) {
+					reject(xhr.responseText || xhr.statusText);
+				}
+				else {
+					reject(xhr.statusText);
+				}
+			};
+			xhr.onerror = function (response) {
+				reject(response);
+			};
+			let url = "http://127.0.0.1:64031/" + command;
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.setRequestHeader('Accept', 'text/plain');
+			xhr.setRequestHeader('Content-Type', 'text/plain');
+			xhr.send(data);
 		});
 	}
 };
@@ -1378,7 +1422,7 @@ app.modules['std:validators'] = function () {
 
 // Copyright © 2015-2018 Alex Kukhtin. All rights reserved.
 
-// 20180630-7236
+// 20180823-7285
 // services/datamodel.js
 
 (function () {
@@ -1621,8 +1665,15 @@ app.modules['std:validators'] = function () {
 				if (x[0] === '$' || x[0] === '_')
 					continue;
 				let sx = this[x];
-				if (utils.isObject(sx) && '$valid' in sx) {
-					let sx = this[x];
+				if (utils.isArray(sx)) {
+					for (let i = 0; i < sx.length; i++) {
+						let ax = sx[i];
+						if (utils.isObject(ax) && '$valid' in ax) {
+							if (!ax.$valid)
+								return false;
+						}
+					}
+				} else if (utils.isObject(sx) && '$valid' in sx) {
 					if (!sx.$valid)
 						return false;
 				}
@@ -1858,7 +1909,7 @@ app.modules['std:validators'] = function () {
 
 		arr.$loadLazy = function () {
 			return new Promise((resolve, reject) => {
-				if (this.$loaded) { resolve(self); return; }
+				if (this.$loaded) { resolve(this); return; }
 				if (!this.$parent) { resolve(this); return; }
 				const meta = this.$parent._meta_;
 				if (!meta.$lazy) { resolve(this); return; }
@@ -1991,7 +2042,7 @@ app.modules['std:validators'] = function () {
 
 		obj.$isValid = function (props) {
 			return true;
-		}
+		};
 	}
 
 	function defineObject(obj, meta, arrayItem) {
@@ -2369,7 +2420,6 @@ app.modules['std:validators'] = function () {
 	}
 
 	function isSkipMerge(root, prop) {
-		if (prop.startsWith('$$')) return true; // special properties
 		let t = root.$template;
 		let opts = t && t.options;
 		let bo = opts && opts.bindOnce;
@@ -2385,11 +2435,14 @@ app.modules['std:validators'] = function () {
 			this._root_._enableValidate_ = false;
 			this._lockEvents_ += 1;
 			for (var prop in this._meta_.props) {
+				if (prop.startsWith('$$')) continue; // always skip
 				if (afterSave && isSkipMerge(this._root_, prop)) continue;
 				let ctor = this._meta_.props[prop];
 				if (ctor.type) ctor = ctor.type;
 				let trg = this[prop];
 				if (Array.isArray(trg)) {
+					if (trg.$loaded)
+						trg.$loaded = false; // may be lazy
 					trg.$copy(src[prop]);
 					// copy rowCount
 					if ('$RowCount' in trg) {
@@ -2519,7 +2572,7 @@ app.modules['std:validators'] = function () {
 
 // Copyright © 2015-2018 Alex Kukhtin. All rights reserved.
 
-// 20180709-7243
+// 20180821-7280
 // controllers/standalone.js
 
 (function () {
@@ -2914,7 +2967,7 @@ app.modules['std:validators'] = function () {
 
 		if (callback)
 			callback.call(vm);
-	}
+	};
 
 	app.components['standaloneController'] = standalone;
 })();
