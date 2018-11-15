@@ -9,27 +9,27 @@ namespace A2v10.Standalone.Site.Controllers
 {
 	public class DataController : Controller
 	{
-		A2v10.Request.BaseController _baseController;
+		A2v10.Request.StandaloneController _baseController;
 
 		public DataController()
 		{
-			_baseController = new A2v10.Request.BaseController();
+			_baseController = new A2v10.Request.StandaloneController();
 		}
 
 		[HttpPost]
 		public async Task Load()
 		{
-			await _baseController.StandaloneLoadData(Request, Response);
+			await _baseController.LoadData(Request, Response);
 		}
 
 		public async Task Save()
 		{
-			await _baseController.StandaloneSaveData(Request, Response);
+			await _baseController.SaveData(Request, Response, 0);
 		}
 
 		public async Task Invoke()
 		{
-			//await _baseController.StandaloneInvoke(Request, Response);
+			//await _baseController.Invoke(Request, Response);
 		}
 	}
 }

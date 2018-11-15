@@ -10,11 +10,11 @@ namespace A2v10.Standalone.Site.Controllers
 {
 	public class ModelController : Controller
 	{
-		A2v10.Request.BaseController _baseController;
+		A2v10.Request.StandaloneController _baseController;
 
 		public ModelController()
 		{
-			_baseController = new A2v10.Request.BaseController();
+			_baseController = new A2v10.Request.StandaloneController();
 		}
 
 		public ActionResult Index(String pathInfo)
@@ -25,7 +25,7 @@ namespace A2v10.Standalone.Site.Controllers
 		[HttpGet]
 		public async Task Load(String pathInfo)
 		{
-			await _baseController.StandaloneLoadModel(Response, pathInfo);
+			await _baseController.LoadModel(Response, pathInfo, 0);
 		}
 	}
 }
