@@ -25,7 +25,7 @@ namespace A2v10.Standalone.Site.Controllers
 		[HttpGet]
 		public async Task Load(String pathInfo)
 		{
-			await _baseController.LoadModel(Response, pathInfo, 0);
+			//await _baseController.LoadModel(Response, pathInfo, 0);
 		}
 	}
 }

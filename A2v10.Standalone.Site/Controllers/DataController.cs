@@ -34,6 +34,13 @@ namespace A2v10.Standalone.Site.Controllers
 			await TryCatch(() => _siteController.Data("invoke", Request, Response));
 		}
 
+		[HttpPost]
+		public async Task LoadLazy()
+		{
+			// baseURL!
+			await TryCatch(() => _siteController.Data("loadlazy", Request, Response));
+		}
+
 		public Task TryCatch(Func<Task> action)
 		{
 			try
