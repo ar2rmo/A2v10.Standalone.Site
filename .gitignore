@@ -266,3 +266,5 @@ __pycache__/
 *.pyc
 
 A2V10VUE_ASSEMBLIES_SOURCE.txt
+
+*.orig
