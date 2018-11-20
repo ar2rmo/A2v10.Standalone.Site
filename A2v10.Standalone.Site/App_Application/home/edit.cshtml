@@ -1,0 +1,25 @@
+﻿@model A2v10.Request.ViewInfo
+@{
+	ViewBag.Title = "Test PAGE";
+}
+
+
+<div id="@Model.PageId">
+	<h4>Edit element 123123</h4>
+	<fieldset>
+		<label>Name</label>
+		<input v-model="Agent.Name" />
+		<label>Memo</label>
+		<input v-model="Agent.Memo" />
+		<button v-on:click.stop.prevent="$save">Save</button>
+		<button v-on:click.stop.prevent="$reload">Reload</button>
+	</fieldset>
+	<hr />
+	<code v-text="$baseUrl"></code>
+	<hr />
+	<pre v-text="Agent"></pre>
+</div>
+
+@section scripts {
+	@Html.RenderVueModelScript()
+}

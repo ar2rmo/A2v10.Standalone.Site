@@ -36,7 +36,7 @@ namespace A2v10.Standalone.Site.Controllers
 			var viewInfo = await _siteController.LoadView($"home/edit/{id}");
 			// view from ~/Views.
 			// viewInfo.View - view from ~/App_apps
-			return View(viewInfo);
+			return View(viewInfo.View);
 		}
 	}
 };

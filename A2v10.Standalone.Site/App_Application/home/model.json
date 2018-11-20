@@ -3,7 +3,8 @@
 	"model": "Agent",
 	"actions": {
 			"edit": {
-				"template": "edit.template",
+        "template": "edit.template",
+        "view":  "edit"
 			}
 	}
 }

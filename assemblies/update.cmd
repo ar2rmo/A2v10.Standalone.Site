@@ -58,6 +58,10 @@ copy %src%\A2v10\Shared\A2v10.Infrastructure\obj\Debug\A2v10.Infrastructure.dll 
 copy %src%\A2v10\Shared\A2v10.Infrastructure\obj\Debug\A2v10.Infrastructure.pdb .\debug\A2v10.Infrastructure.pdb
 copy %src%\A2v10\Shared\A2v10.Infrastructure\obj\Release\A2v10.Infrastructure.dll .\release\A2v10.Infrastructure.dll
 
+copy %src%\A2v10\Web\A2v10.Web.Base\bin\Debug\A2v10.Web.Base.dll .\debug\A2v10.Web.Base.dll
+copy %src%\A2v10\Web\A2v10.Web.Base\bin\Debug\A2v10.Web.Base.pdb .\debug\A2v10.Web.Base.pdb
+copy %src%\A2v10\Web\A2v10.Web.Base\bin\Release\A2v10.Web.Base.dll .\release\A2v10.Web.Base.dll
+
 copy %src%\A2v10\Shared\A2v10.Request\bin\Debug\A2v10.Request.dll .\debug\A2v10.Request.dll
 copy %src%\A2v10\Shared\A2v10.Request\bin\Debug\A2v10.Request.pdb .\debug\A2v10.Request.pdb
 copy %src%\A2v10\Shared\A2v10.Request\bin\Release\A2v10.Request.dll .\release\A2v10.Request.dll
