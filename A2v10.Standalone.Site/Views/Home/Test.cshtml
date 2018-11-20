@@ -1,30 +1,25 @@
-﻿@{
+﻿@model A2v10.Request.ViewInfo
+@{
 	ViewBag.Title = "Test PAGE";
 }
 
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
 
-
-<div id="page1">
+<div id="@Model.PageId">
 	<h4>Edit element</h4>
 	<fieldset>
 		<label>Name</label>
 		<input v-model="Agent.Name" />
 		<label>Memo</label>
 		<input v-model="Agent.Memo" />
-		<button v-on:click.stop.prevent="save">Save</button>
+		<button v-on:click.stop.prevent="$save">Save</button>
+		<button v-on:click.stop.prevent="$reload">Reload</button>
 	</fieldset>
+	<hr />
+	<code v-text="$baseUrl"></code>
 	<hr />
 	<pre v-text="Agent"></pre>
 </div>
 
 @section scripts {
-
-<!--{path}/{action}/{id}-->
-<script src="/model/load/catalog/customer/edit/0"></script>
-
-<script type="text/javascript">
-	@Html.Raw(ViewBag.Script)
-</script>
+	@Html.RenderVueModelScript()
 }

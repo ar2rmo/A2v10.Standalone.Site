@@ -1,0 +1,10 @@
+﻿{
+	"schema": "a2demo",
+	"model": "Agent",
+	"actions": {
+			"edit": {
+				"template": "edit.template",
+				"view": "test"
+			}
+	}
+}

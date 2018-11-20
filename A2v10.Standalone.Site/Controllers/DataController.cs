@@ -9,27 +9,49 @@ namespace A2v10.Standalone.Site.Controllers
 {
 	public class DataController : Controller
 	{
-		A2v10.Request.StandaloneController _baseController;
+		private readonly A2v10.Request.SiteController _siteController;
 
 		public DataController()
 		{
-			_baseController = new A2v10.Request.StandaloneController();
+			_siteController = new A2v10.Request.SiteController();
+			// user id may be needed
+			_siteController.UserId = () => 0;
 		}
 
 		[HttpPost]
-		public async Task Load()
+		public async Task Reload()
 		{
-			await _baseController.LoadData(Request, Response);
+			await TryCatch(() => _siteController.Data("reload", Request, Response));
 		}
 
 		public async Task Save()
 		{
-			await _baseController.SaveData(Request, Response, 0);
+			await TryCatch(() => _siteController.Data("save", Request, Response));
 		}
 
 		public async Task Invoke()
 		{
-			//await _baseController.Invoke(Request, Response);
+			await TryCatch(() => _siteController.Data("invoke", Request, Response));
+		}
+
+		[HttpPost]
+		public async Task LoadLazy()
+		{
+			// baseURL!
+			await TryCatch(() => _siteController.Data("loadlazy", Request, Response));
+		}
+
+		public Task TryCatch(Func<Task> action)
+		{
+			try
+			{
+				return action();
+			}
+			catch (Exception ex)
+			{
+				_siteController.WriteExceptionStatus(ex, Response);
+			}
+			return null;
 		}
 	}
 }

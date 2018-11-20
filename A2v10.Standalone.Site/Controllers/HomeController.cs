@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -9,6 +10,7 @@ namespace A2v10.Standalone.Site.Controllers
 {
 	public class HomeController : Controller
 	{
+		A2v10.Request.SiteController _siteController = new A2v10.Request.SiteController();
 		public ActionResult Index()
 		{
 			return View();
@@ -28,14 +30,13 @@ namespace A2v10.Standalone.Site.Controllers
 			return View();
 		}
 
-		public ActionResult Test()
+		public async Task<ActionResult> Test(String id)
 		{
-			ViewBag.Message = "Your Test Page";
-
-			String path = Server.MapPath("~/App_Data/Home/test.js");
-			String script = System.IO.File.ReadAllText(path);
-			ViewBag.Script = script;
-			return View();
+			// {path}/{action}/{id}
+			var viewInfo = await _siteController.LoadView($"home/edit/{id}");
+			// view from ~/Views.
+			// viewInfo.View - view from ~/App_apps
+			return View(viewInfo);
 		}
 	}
 };
