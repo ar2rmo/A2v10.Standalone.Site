@@ -166,7 +166,12 @@ app.modules['std:utils'] = function () {
 			containsText: textContainsText,
 			sanitize,
 			splitPath
-		},
+        },
+        valid: {
+            phone: validPhone,
+            email: validEmail,
+            taxNo: validTaxNo
+        },
 		func: {
 			curry,
 			debounce
@@ -593,7 +598,52 @@ app.modules['std:utils'] = function () {
 		return (..._arg) => {
 			return fn(...args, ..._arg);
 		};
-	}
+    }
+
+
+    function validPhone(p) {
+        return p.toString().match(/^\+380[0-9]{9}$/);
+    }
+
+    function validEmail(e) {
+        return e.toString().match(/^[-a-zA-Z0-9_\.]+@[-a-zA-Z0-9_\.]+?\.[a-zA-Z]{2,3}$/);
+    }
+
+    function tn_parse(num) {
+        if (!num) return null;
+        var _num = num.toString();
+        if (!_num.match(/^[0-9]{10}$/)) return null;
+        return _num;
+    }
+
+    function tn_validate(_num) {
+        var sum = _num[0] * (-1) + _num[1] * 5 + _num[2] * 7 + _num[3] * 9 + _num[4] * 4 + _num[5] * 6 + _num[6] * 10 + _num[7] * 5 + _num[8] * 7;
+        var ch = ((sum % 11) % 10);
+        return (ch == _num[9]);
+    }
+
+    function tn_birthday(_num) {
+        var days = _num[0] * 10000 + _num[1] * 1000 + _num[2] * 100 + _num[3] * 10 + _num[4] * 1 - 1;
+        var dt1 = new Date(Date.UTC(1900, 0, 1, 0, 0, 0, 0));
+        var dt2 = new Date(dt1.getTime() + days * 1000 * 60 * 60 * 24);
+        dt2.setUTCHours(0, 0, 0, 0, 0);
+        return dt2;
+    }
+
+    function validTaxNo(num, bdt) {
+        var ret = {
+            format: false, checksum: false, isDate: false, dateValid: false
+        }
+        var _num = tn_parse(num);
+        if (_num !== null) ret.format = true;
+        if (ret.format) ret.checksum = tn_validate(_num);
+        if (ret.checksum) {
+            if (bdt && isDate(bdt) && !dateIsZero(bdt)) ret.isDate = true;
+            if (ret.isDate) ret.dateValid = dateEqual(bdt, tn_birthday(_num));
+        }
+        return ret;
+    }
+
 };
 
 
